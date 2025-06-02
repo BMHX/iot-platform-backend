@@ -1,0 +1,8 @@
+auth:
+  ignore_urls:
+    - /api/admin/**
+    - /api/*
+    - /iot/permission/**
+    - /iot/prices/**
+    - /iot/devices/**
+    - /iot/protocol/**

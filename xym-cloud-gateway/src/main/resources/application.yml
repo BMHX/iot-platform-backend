@@ -1,0 +1,77 @@
+server:
+  port: 8030
+
+spring:
+  application:
+    name: xym-cloud-gateway
+  cloud:
+    gateway:
+      metrics:
+        enabled: true
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: xym-cloud-user
+          uri: lb://xym-cloud-user
+          order: 9999
+          predicates:
+            - Path=/**
+#        - id: xym-cloud-content
+#          uri: lb://xym-cloud-content
+#          order: 1
+#          predicates:
+#            - Path=/content/**
+#          filters:
+#            - StripPrefix=1
+        - id: xym-cloud-iot
+          uri: lb://xym-cloud-iot
+          order: 2
+          predicates:
+            - Path=/iot/**
+          filters:
+            - StripPrefix=1
+        - id: ymx-admin-iot
+          uri: lb://ymx-admin-iot
+          order: 1
+          predicates:
+            - Path=/admin/**
+          filters:
+            - StripPrefix=1
+        - id: ymx-amin-iot
+          uri: lb://ymx-amin-iot
+          order: 3
+          predicates:
+            - Path=/amin/**'
+          filters:
+            - StripPrefix=1
+    nacos:
+      username: @nacos.username@
+      password: @nacos.password@
+      discovery:
+        server-addr: @nacos.server-addr@
+        namespace: @nacos.namespace@
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+  config:
+    import:
+      - optional:nacos:datasource.yaml
+      - optional:nacos:common.yaml
+
+knife4j:
+  # 聚合swagger文档
+  gateway:
+    enabled: true
+    # 指定服务发现的模式聚合微服务文档，并且是默认`default`分组
+    strategy: discover
+    discover:
+      enabled: true
+      version : openapi3
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
