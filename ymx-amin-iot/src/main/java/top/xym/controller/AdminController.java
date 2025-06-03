@@ -18,9 +18,9 @@ import top.xym.framework.common.utils.Result;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/amin") // Consistent with ymx-admin-iot
+@RequestMapping("/api/amin")
 @Tag(name = "管理员模块")
-@AllArgsConstructor // For constructor injection
+@AllArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
@@ -36,7 +36,7 @@ public class AdminController {
     }
 
     @Operation(summary = "更新管理员信息")
-    @PutMapping("/update") // Using PUT for updates
+    @PutMapping("/update")
     public Result<String> updateAdmin(@Valid @RequestBody AdminUpdateDTO updateDTO) {
         boolean success = adminService.updateAdmin(updateDTO);
         if (success) {
@@ -67,15 +67,15 @@ public class AdminController {
     public Result<List<AdminVO>> page(@ParameterObject @Valid AdminQuery query) {
         List<AdminVO> list = adminService.page(query);
         if (list == null || list.isEmpty()){
-            // Consider returning an empty list Result.ok(Collections.emptyList()) instead of error for no data found
+
             return Result.error("未查询到管理员信息");
         }
         return Result.ok(list);
     }
 
-    @DeleteMapping("/delete/{id}") // Using DELETE for deletions
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = "删除管理员")
-    public Result<String> delete(@PathVariable Long id) { // PathVariable type should match service method parameter
+    public Result<String> delete(@PathVariable Long id) {
         adminService.deleteAdmin(id);
         return Result.ok("管理员删除成功");
     }

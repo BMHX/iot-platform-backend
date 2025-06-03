@@ -40,9 +40,9 @@ spring:
             - StripPrefix=1
         - id: ymx-amin-iot
           uri: lb://ymx-amin-iot
-          order: 3
+          order: 1
           predicates:
-            - Path=/amin/**'
+            - Path=/amin/**
           filters:
             - StripPrefix=1
     nacos:

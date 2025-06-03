@@ -1,8 +1,6 @@
 package top.xym.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import java.time.LocalDateTime; // Using LocalDateTime for datetime fields
 
@@ -17,6 +15,7 @@ public class AdminEntity {
 
     private String password;
 
+    @TableField("createdtime")
     private LocalDateTime createdTime; // Consistent naming with your description
 
     private String identity;
