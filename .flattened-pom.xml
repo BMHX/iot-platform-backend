@@ -27,6 +27,8 @@
     <module>xym-cloud-user</module>
     <module>xym-cloud-module</module>
     <module>xym-cloud-iot</module>
+    <module>ymx-admin-iot</module>
+    <module>ymx-amin-iot</module>
   </modules>
   <properties>
     <aliyun.oss.version>3.15.2</aliyun.oss.version>
@@ -261,7 +263,7 @@
         <nacos.namespace>public</nacos.namespace>
         <nacos.password>nacos</nacos.password>
         <profile.name>prod</profile.name>
-        <nacos.server-addr>43.137.12.232:8848</nacos.server-addr>
+        <nacos.server-addr>121.43.133.175:8848</nacos.server-addr>
       </properties>
     </profile>
   </profiles>

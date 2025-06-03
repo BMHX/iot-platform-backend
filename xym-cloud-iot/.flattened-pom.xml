@@ -19,7 +19,7 @@
   <dependencies>
     <dependency>
       <groupId>top.xym</groupId>
-      <artifactId>xym-cloud</artifactId>
+      <artifactId>xym-cloud-framework</artifactId>
       <version>${revision}</version>
     </dependency>
     <dependency>

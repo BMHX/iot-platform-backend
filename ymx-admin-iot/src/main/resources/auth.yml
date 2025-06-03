@@ -6,3 +6,7 @@ auth:
     - /iot/prices/**
     - /iot/devices/**
     - /iot/protocol/**
+    - /api/tenant-type/**
+    - /iot/tenant-attribute-definitions/**
+    - /iot/tenant-attribute-values/**
+    - /api/tenant/**
