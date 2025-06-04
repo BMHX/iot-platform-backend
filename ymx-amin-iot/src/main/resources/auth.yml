@@ -1,3 +1,5 @@
 auth:
   ignore_urls:
     - /api/amin/**
+    - /api/device/**
+    - /api/device-protocol/**

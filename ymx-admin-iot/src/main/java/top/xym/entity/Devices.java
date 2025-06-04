@@ -25,8 +25,6 @@ public class Devices implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @TableField("user_id")
-    private Integer userId;
 
     @TableField("device_name")
     private String deviceName;
@@ -45,12 +43,12 @@ public class Devices implements Serializable {
     @TableField("device_type")
     private String deviceType;
 
-    @TableField("room_id")
-    private Integer roomId;
 
     @TableField("admin_id")
     private Integer adminId;
 
+    @TableField("device_integration")
+    private Integer deviceIntegration;
     private String latitude;
 
     private String longitude;

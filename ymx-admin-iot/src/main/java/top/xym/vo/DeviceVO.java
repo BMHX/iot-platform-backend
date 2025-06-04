@@ -16,15 +16,14 @@ public class DeviceVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private Integer userId;
     private String deviceName;
     private String deviceCode;
     private String status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String deviceType;
-    private Integer roomId;
     private Integer adminId;
+    private Integer deviceIntegration;
     private String latitude;
     private String longitude;
 
