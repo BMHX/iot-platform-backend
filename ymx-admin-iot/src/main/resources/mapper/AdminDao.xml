@@ -6,6 +6,13 @@
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="identity" property="identity"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="permission_id" property="permissionId"/>
+        <result column="createdtime" property="createTime"/>
     </resultMap>
     <select id="getAllAdmins" resultMap="AdminResultMap">
         SELECT * FROM admin

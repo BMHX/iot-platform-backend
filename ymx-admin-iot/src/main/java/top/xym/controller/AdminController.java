@@ -43,6 +43,7 @@ public class AdminController {
     @Operation(summary = "分页获取管理员列表")
     public Result<List<AdminVO>> page(@ParameterObject @Valid AdminQuery query) {
         return Result.ok(adminService.page(query).getList());
+
     }
 
     @GetMapping("/{id}")

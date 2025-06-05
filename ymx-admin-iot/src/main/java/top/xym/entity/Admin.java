@@ -34,6 +34,31 @@ public class Admin extends BaseEntity {
      * 身份标识
      */
     private String identity; // 假设数据库中列名为 identity
+    
+    /**
+     * 姓名
+     */
+    private String name;
+    
+    /**
+     * 邮箱
+     */
+    private String email;
+    
+    /**
+     * 手机号
+     */
+    private String phone;
+    
+    /**
+     * 状态
+     */
+    private String status;
+    
+    /**
+     * 最后登录时间
+     */
+    private LocalDateTime lastLoginTime;
 
     /**
      * 创建时间

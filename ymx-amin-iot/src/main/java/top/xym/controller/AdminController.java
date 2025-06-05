@@ -66,10 +66,13 @@ public class AdminController {
     @Operation(summary = "分页获取管理员列表")
     public Result<List<AdminVO>> page(@ParameterObject @Valid AdminQuery query) {
         List<AdminVO> list = adminService.page(query);
-        if (list == null || list.isEmpty()){
+        return Result.ok(list);
+    }
 
-            return Result.error("未查询到管理员信息");
-        }
+    @GetMapping("/all")
+    @Operation(summary = "获取所有管理员列表")
+    public Result<List<AdminVO>> getAllAdmins() {
+        List<AdminVO> list = adminService.getAllAdmins();
         return Result.ok(list);
     }
 

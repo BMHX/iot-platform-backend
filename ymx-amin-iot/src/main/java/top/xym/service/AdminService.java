@@ -25,5 +25,6 @@ public interface AdminService {
 
     void deleteAdmin(Long id);
 
+    List<AdminVO> getAllAdmins();
 
 }

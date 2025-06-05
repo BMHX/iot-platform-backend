@@ -9,4 +9,8 @@ public class AdminDTO {
     private String password;  // 管理员密码
     private String identity;  // 管理员身份
     private Integer permissionId; // 权限套餐ID
+    private String name;      // 管理员姓名
+    private String email;     // 管理员邮箱
+    private String phone;     // 管理员手机号
+    private String status;    // 管理员状态
 }

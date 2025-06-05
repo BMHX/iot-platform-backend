@@ -134,6 +134,13 @@ public class AdminServiceImpl implements AdminService {
         // IPage<AdminEntity> iPage = adminMapper.selectPage(new Page<>(query.getPage(), query.getLimit()), wrapper);
         // return new PageResult<>(AdminConvert.INSTANCE.convertToVOList(iPage.getRecords()), iPage.getTotal());
     }
+    
+    @Override
+    public List<AdminVO> getAllAdmins() {
+        // 获取所有管理员，不进行分页
+        List<AdminEntity> adminList = adminMapper.selectList(null);
+        return AdminConvert.INSTANCE.convertToVOList(adminList);
+    }
 
     @Override
     public void deleteAdmin(Long id) {
