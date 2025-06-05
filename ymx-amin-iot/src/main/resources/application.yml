@@ -23,3 +23,9 @@ logging:
   level:
     org.springframework.web: DEBUG
     org.springframework.web.cors: DEBUG
+
+mqtt:
+  broker:
+    url: tcp://121.43.133.175:1883
+  client:
+    id: iot-platform-${random.uuid}

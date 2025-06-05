@@ -8,6 +8,7 @@ import top.xym.vo.AdminInfoVO;
 import top.xym.vo.AdminVO;
 // import top.xym.framework.common.utils.PageResult; // If using PageResult for pagination
 import java.util.List; // Or use PageResult
+import top.xym.entity.Admin;
 
 public interface AdminService {
 
@@ -23,8 +24,16 @@ public interface AdminService {
     // PageResult<AdminVO> page(AdminQuery query); // Option 1: Return PageResult
     List<AdminVO> page(AdminQuery query); // Option 2: Return List<AdminVO> as in your controller
 
-    void deleteAdmin(Long id);
+    void deleteAdmin(Integer id);
 
     List<AdminVO> getAllAdmins();
+
+    AdminDTO getAdminProfile(Integer id);
+
+    AdminDTO updateAdminProfile(AdminDTO adminDTO);
+
+    void updateLastLoginTime(Integer id);
+
+    void register(AdminDTO adminDTO);
 
 }

@@ -21,4 +21,15 @@ public class AdminEntity {
     private String identity;
 
     private Integer permissionId;
+
+    private String name;
+
+    private String email;
+
+    private String phone;
+
+    private String status;
+
+    @TableField("last_login_time")
+    private LocalDateTime lastLoginTime;
 }

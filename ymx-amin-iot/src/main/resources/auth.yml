@@ -7,3 +7,6 @@ auth:
     - /api/login
     - /api/user/**
     - /api/permissions/**
+    - /api/device-stats/**
+    - /admin/api/device-stats/**
+    - /admin/api/**

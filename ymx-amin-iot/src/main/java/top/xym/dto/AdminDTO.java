@@ -3,6 +3,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 @Schema(description = "管理员DTO，用于新增或通用更新")
@@ -23,4 +24,25 @@ public class AdminDTO {
 
     @Schema(description = "权限套餐ID")
     private Integer permissionId;
+
+    @Schema(description = "创建时间")
+    private LocalDateTime createdTime;
+
+    @Schema(description = "名称")
+    private String name;
+
+    @Schema(description = "电子邮件")
+    private String email;
+
+    @Schema(description = "电话")
+    private String phone;
+
+    @Schema(description = "状态")
+    private String status;
+
+    @Schema(description = "上次登录时间")
+    private LocalDateTime lastLoginTime;
+
+    @Schema(description = "权限名称")
+    private String permissionName;
 }

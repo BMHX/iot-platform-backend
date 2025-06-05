@@ -42,7 +42,7 @@ spring:
           uri: lb://ymx-amin-iot
           order: 1
           predicates:
-            - Path=/amin/**
+            - Path=/admin/**
           filters:
             - StripPrefix=1
     nacos:
