@@ -10006,3 +10006,31 @@ com.alibaba.nacos.api.exception.NacosException: Client not connected, current st
 2025-06-05 01:02:31.778 [nacos.client.config.listener.task-0] ERROR com.alibaba.nacos.common.remote.client - Send request fail, request = ConfigBatchListenRequest{headers={accessToken=, charset=UTF-8, Client-AppName=unknown, Client-RequestToken=0379db5efdc5dc18151c7ff63e7c885b, Client-RequestTS=1749056551674, exConfigInfo=true}, requestId='null'}, retryTimes = 0, errorMessage = Client not connected, current status:UNHEALTHY
 2025-06-05 01:02:31.881 [nacos.client.config.listener.task-0] ERROR com.alibaba.nacos.common.remote.client - Send request fail, request = ConfigBatchListenRequest{headers={accessToken=, charset=UTF-8, Client-AppName=unknown, Client-RequestToken=0379db5efdc5dc18151c7ff63e7c885b, Client-RequestTS=1749056551674, exConfigInfo=true}, requestId='null'}, retryTimes = 1, errorMessage = Client not connected, current status:UNHEALTHY
 2025-06-05 01:02:31.982 [nacos.client.config.listener.task-0] ERROR com.alibaba.nacos.common.remote.client - Send request fail, request = ConfigBatchListenRequest{headers={accessToken=, charset=UTF-8, Client-AppName=unknown, Client-RequestToken=0379db5efdc5dc18151c7ff63e7c885b, Client-RequestTS=1749056551674, exConfigInfo=true}, requestId='null'}, retryTimes = 2, errorMessage = Client not connected, current status:UNHEALTHY
+2025-06-05 13:05:33.891 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'passwordEncoder', defined in class path resource [top/xym/framework/security/config/PasswordConfig.class], could not be registered. A bean with that name has already been defined in class path resource [top/xym/config/WebSecurityConfig.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+
+2025-06-05 13:08:53.356 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+The bean 'securityFilterChain', defined in class path resource [top/xym/framework/security/config/SecurityFilterConfig.class], could not be registered. A bean with that name has already been defined in class path resource [top/xym/config/WebSecurityConfig.class] and overriding is disabled.
+
+Action:
+
+Consider renaming one of the beans or enabling overriding by setting spring.main.allow-bean-definition-overriding=true
+

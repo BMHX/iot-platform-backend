@@ -3,3 +3,7 @@ auth:
     - /api/amin/**
     - /api/device/**
     - /api/device-protocol/**
+    - /api/register
+    - /api/login
+    - /api/user/**
+    - /api/permissions/**

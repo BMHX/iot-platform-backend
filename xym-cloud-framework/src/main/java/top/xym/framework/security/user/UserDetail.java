@@ -33,6 +33,21 @@ public class UserDetail implements UserDetails {
     private Integer status;
     private LocalDateTime createTime;
 
+    // 新增构造函数以匹配 JwtAuthenticationFilter.java 中的调用
+    public UserDetail(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
+        this.username = username;
+        this.password = password; // 注意：在 JwtAuthenticationFilter 中传递的是 null
+        if (authorities != null) {
+            this.authoritySet = authorities.stream()
+                                          .map(GrantedAuthority::getAuthority)
+                                          .collect(Collectors.toSet());
+        } else {
+            this.authoritySet = Set.of(); // 或者根据业务逻辑设置为一个空集合
+        }
+        // 根据需要初始化其他字段的默认值
+    }
+
     /**
      * 帐户是否过期
      */
