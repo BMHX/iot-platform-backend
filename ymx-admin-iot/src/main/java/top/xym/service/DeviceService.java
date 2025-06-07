@@ -6,6 +6,7 @@ import top.xym.vo.DeviceVO;
 // import top.xym.dto.DeviceDTO; // 如果有新增修改等操作再引入
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备表 服务接口
@@ -29,6 +30,13 @@ public interface DeviceService {
      * @return 设备列表
      */
     List<DeviceVO> listAll();
+
+    /**
+     * 获取仪表盘数据
+     *
+     * @return 仪表盘数据
+     */
+    Map<String, Object> getDashboardData();
 
     // 如果需要增删改查，后续可以添加 save, update, delete, getById 等方法
 }

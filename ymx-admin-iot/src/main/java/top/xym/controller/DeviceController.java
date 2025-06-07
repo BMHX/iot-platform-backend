@@ -9,8 +9,10 @@ import top.xym.framework.common.utils.Result; // 假设您有通用的Result类
 import top.xym.query.DeviceQuery;
 import top.xym.service.DeviceService;
 import top.xym.vo.DeviceVO;
+import top.xym.vo.DashboardDataVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备表 Controller
@@ -38,6 +40,13 @@ public class DeviceController {
     public Result<List<DeviceVO>> listAll() {
         List<DeviceVO> list = deviceService.listAll();
         return Result.ok(list);
+    }
+
+    @GetMapping("/dashboard")
+    @Operation(summary = "获取仪表盘数据")
+    public Result<Map<String, Object>> getDashboardData() {
+        Map<String, Object> dashboardData = deviceService.getDashboardData();
+        return Result.ok(dashboardData);
     }
 
     // 如果需要增删改查，后续可以添加 @PostMapping, @PutMapping, @DeleteMapping, @GetMapping("/{id}") 等端点
