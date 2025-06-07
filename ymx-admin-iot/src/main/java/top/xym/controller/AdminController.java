@@ -56,6 +56,7 @@ public class AdminController {
     @Operation(summary = "更新管理员信息")
     public Result<String> update(@Valid @RequestBody AdminDTO adminDto) {
         adminService.updateAdmin(adminDto);
+        System.out.println(adminDto);
         return Result.ok("管理员信息更新成功");
     }
 

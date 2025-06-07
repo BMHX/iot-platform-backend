@@ -1,39 +1,41 @@
 package top.xym.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
- * 协议表DTO
+ * 协议DTO
  *
  * @author TraeAI
- * @since 2024-07-30
  */
 @Data
-@Schema(description = "协议信息数据传输对象")
+@Schema(description = "协议DTO")
 public class ProtocolDTO {
 
-    @Schema(description = "协议ID，更新时需要")
-    private Long id;
+    @Schema(description = "协议ID")
+    private Integer id;
 
-    @NotEmpty(message = "协议名称不能为空")
+    @NotBlank(message = "协议名称不能为空")
     @Schema(description = "协议名称", required = true)
-    private String protocolName;
+    private String name;
 
-    @NotEmpty(message = "协议编码不能为空")
-    @Schema(description = "协议编码", required = true)
-    private String protocolCode;
+    @NotBlank(message = "协议类型不能为空")
+    @Schema(description = "协议类型", required = true)
+    private String type;
 
-    @NotEmpty(message = "协议版本不能为空")
+    @NotBlank(message = "协议版本不能为空")
     @Schema(description = "协议版本", required = true)
     private String version;
 
     @Schema(description = "协议描述")
     private String description;
 
-    @NotNull(message = "状态不能为空")
-    @Schema(description = "状态 (例如: 0-禁用, 1-启用)", required = true)
-    private Integer status;
+    @Schema(description = "协议状态：enabled-启用，disabled-禁用")
+    private String status;
+
+    @Schema(description = "协议配置，JSON格式")
+    private String config;
 }

@@ -1,27 +1,27 @@
 package top.xym.vo;
 
-import lombok.Data;
-import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
- * 协议表VO
+ * 协议VO
  *
  * @author TraeAI
- * @since 2024-07-30
  */
 @Data
-@Schema(description = "协议信息视图对象")
+@Schema(description = "协议VO")
 public class ProtocolVO {
 
     @Schema(description = "协议ID")
-    private Long id;
+    private Integer id;
 
     @Schema(description = "协议名称")
-    private String protocolName;
+    private String name;
 
-    @Schema(description = "协议编码")
-    private String protocolCode;
+    @Schema(description = "协议类型")
+    private String type;
 
     @Schema(description = "协议版本")
     private String version;
@@ -29,12 +29,18 @@ public class ProtocolVO {
     @Schema(description = "协议描述")
     private String description;
 
-    @Schema(description = "状态 (例如: 0-禁用, 1-启用)")
-    private Integer status;
+    @Schema(description = "协议状态：enabled-启用，disabled-禁用")
+    private String status;
+
+    @Schema(description = "协议配置，JSON格式")
+    private String config;
 
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
 
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
+
+    @Schema(description = "创建人")
+    private String creator;
 }
