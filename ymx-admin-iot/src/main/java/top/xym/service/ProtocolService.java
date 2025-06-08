@@ -74,7 +74,7 @@ public interface ProtocolService {
      * @param id 协议ID
      * @param status 状态
      */
-    void updateProtocolStatus(Integer id, String status);
+    void updateProtocolStatus(Integer id, Integer status);
 
     /**
      * 保存协议配置

@@ -3,11 +3,20 @@ package top.xym.service.impl;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import top.xym.convert.VersionConvert;
+import top.xym.dao.VersionDao;
 import top.xym.dto.VersionDTO;
+import top.xym.entity.Version;
 import top.xym.framework.common.utils.PageResult;
 import top.xym.query.VersionQuery;
 import top.xym.service.VersionService;
 import top.xym.vo.VersionVO;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,125 +35,139 @@ import java.util.List;
 @AllArgsConstructor
 public class VersionServiceImpl implements VersionService {
 
+    private final VersionDao versionDao;
+
     @Override
     public PageResult<VersionVO> getVersionPage(VersionQuery query) {
-        // 模拟数据，实际项目中应该从数据库查询
-        List<VersionVO> list = getMockVersionList();
-        
-        // 过滤
-        if (query.getVersion() != null && !query.getVersion().isEmpty()) {
-            list = list.stream()
-                    .filter(v -> v.getVersion().contains(query.getVersion()))
-                    .toList();
-        }
-        
-        if (query.getType() != null && !query.getType().isEmpty()) {
-            list = list.stream()
-                    .filter(v -> v.getType().equals(query.getType()))
-                    .toList();
-        }
-        
-        if (query.getIsActive() != null) {
-            list = list.stream()
-                    .filter(v -> v.getIsActive().equals(query.getIsActive()))
-                    .toList();
-        }
-        
-        // 分页
-        int total = list.size();
-        int page = query.getPage() != null ? query.getPage() : 1;
-        int limit = query.getLimit() != null ? query.getLimit() : 10;
-        int start = (page - 1) * limit;
-        int end = Math.min(start + limit, total);
-        
-        List<VersionVO> pageList = start < total ? list.subList(start, end) : new ArrayList<>();
-        
-        return new PageResult<>(pageList, total);
+        Page<Version> page = new Page<>(query.getPage(), query.getLimit());
+        LambdaQueryWrapper<Version> wrapper = buildQueryWrapper(query);
+        versionDao.selectPage(page, wrapper);
+        return new PageResult<>(VersionConvert.INSTANCE.convertList(page.getRecords()), page.getTotal());
     }
 
     @Override
     public List<VersionVO> getVersionList(VersionQuery query) {
-        // 模拟数据，实际项目中应该从数据库查询
-        List<VersionVO> list = getMockVersionList();
-        
-        // 过滤
-        if (query.getVersion() != null && !query.getVersion().isEmpty()) {
-            list = list.stream()
-                    .filter(v -> v.getVersion().contains(query.getVersion()))
-                    .toList();
-        }
-        
-        if (query.getType() != null && !query.getType().isEmpty()) {
-            list = list.stream()
-                    .filter(v -> v.getType().equals(query.getType()))
-                    .toList();
-        }
-        
-        if (query.getIsActive() != null) {
-            list = list.stream()
-                    .filter(v -> v.getIsActive().equals(query.getIsActive()))
-                    .toList();
-        }
-        
-        return list;
+        LambdaQueryWrapper<Version> wrapper = buildQueryWrapper(query);
+        List<Version> versions = versionDao.selectList(wrapper);
+        return VersionConvert.INSTANCE.convertList(versions);
     }
 
     @Override
     public VersionVO getVersionById(Integer id) {
-        // 模拟数据，实际项目中应该从数据库查询
-        return getMockVersionList().stream()
-                .filter(v -> v.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        Version version = versionDao.selectById(id);
+        return version != null ? VersionConvert.INSTANCE.convert(version) : null;
+    }
+
+    private LambdaQueryWrapper<Version> buildQueryWrapper(VersionQuery query) {
+        LambdaQueryWrapper<Version> wrapper = Wrappers.lambdaQuery();
+        if (StringUtils.hasText(query.getVersion())) {
+            wrapper.like(Version::getVersion, query.getVersion());
+        }
+        if (StringUtils.hasText(query.getType())) {
+            wrapper.eq(Version::getType, query.getType());
+        }
+        if (query.getIsActive() != null) {
+            wrapper.eq(Version::getIsActive, query.getIsActive());
+        }
+        // 默认排序
+        wrapper.orderByDesc(Version::getId);
+        return wrapper;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer createVersion(VersionDTO versionDTO) {
-        // 模拟创建，实际项目中应该保存到数据库
         // 如果设置为激活版本，需要将其他版本设置为非激活
         if (Boolean.TRUE.equals(versionDTO.getIsActive())) {
-            // 在实际项目中，这里应该更新数据库中的其他版本为非激活
+            deactivateAllVersions();
         }
         
-        // 模拟返回ID
-        return 100;
+        Version version = VersionConvert.INSTANCE.convert(versionDTO);
+        versionDao.insert(version);
+        return version.getId().intValue();
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updateVersion(Integer id, VersionDTO versionDTO) {
-        // 模拟更新，实际项目中应该更新数据库
-        // 如果设置为激活版本，需要将其他版本设置为非激活
-        if (Boolean.TRUE.equals(versionDTO.getIsActive())) {
-            // 在实际项目中，这里应该更新数据库中的其他版本为非激活
+        Version version = versionDao.selectById(id);
+        if (version == null) {
+            throw new RuntimeException("版本不存在");
         }
+        
+        // 如果设置为激活版本，需要将其他版本设置为非激活
+        if (Boolean.TRUE.equals(versionDTO.getIsActive()) && !Boolean.TRUE.equals(version.getIsActive())) {
+            deactivateAllVersions();
+        }
+        
+        Version updateVersion = VersionConvert.INSTANCE.convert(versionDTO);
+        updateVersion.setId(Long.valueOf(id));
+        
+        versionDao.updateById(updateVersion);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteVersion(Integer id) {
-        // 模拟删除，实际项目中应该从数据库删除
-        // 需要验证是否为当前激活版本，如果是则不能删除
-        VersionVO version = getVersionById(id);
-        if (version != null && Boolean.TRUE.equals(version.getIsActive())) {
+        Version version = versionDao.selectById(id);
+        if (version == null) {
+            throw new RuntimeException("版本不存在");
+        }
+        
+        // 验证是否为当前激活版本，如果是则不能删除
+        if (Boolean.TRUE.equals(version.getIsActive())) {
             throw new RuntimeException("当前激活版本不能删除");
         }
+        
+        versionDao.deleteById(id);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void setActiveVersion(Integer id) {
-        // 模拟设置激活版本，实际项目中应该更新数据库
-        // 先将所有版本设置为非激活，然后将指定版本设置为激活
+        Version version = versionDao.selectById(id);
+        if (version == null) {
+            throw new RuntimeException("版本不存在");
+        }
+        
+        // 先将所有版本设置为非激活
+        deactivateAllVersions();
+        
+        // 将指定版本设置为激活
+        Version updateVersion = new Version();
+        updateVersion.setId(Long.valueOf(id));
+        updateVersion.setIsActive(true);
+        
+        versionDao.updateById(updateVersion);
+    }
+
+    /**
+     * 将所有版本设置为非激活
+     */
+    private void deactivateAllVersions() {
+        LambdaQueryWrapper<Version> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(Version::getIsActive, true);
+        
+        List<Version> activeVersions = versionDao.selectList(wrapper);
+        for (Version version : activeVersions) {
+            version.setIsActive(false);
+            versionDao.updateById(version);
+        }
     }
 
     @Override
     public void generateVersionLog(HttpServletResponse response) throws IOException {
-        // 获取所有版本信息
-        List<VersionVO> versionList = getMockVersionList();
+        // 获取所有版本信息，按发布时间降序排序
+        LambdaQueryWrapper<Version> wrapper = Wrappers.lambdaQuery();
+        wrapper.orderByDesc(Version::getPublishTime);
+        List<Version> versionList = versionDao.selectList(wrapper);
+        List<VersionVO> versionVOList = VersionConvert.INSTANCE.convertList(versionList);
         
         // 生成Markdown格式的版本日志
         StringBuilder sb = new StringBuilder();
         sb.append("# 版本更新日志\n\n");
         
-        for (VersionVO version : versionList) {
+        for (VersionVO version : versionVOList) {
             sb.append("## ").append(version.getVersion()).append(" (")
               .append(version.getType().equals("stable") ? "正式版" : 
                      version.getType().equals("beta") ? "测试版" : "内测版")
@@ -172,79 +195,5 @@ public class VersionServiceImpl implements VersionService {
             os.write(sb.toString().getBytes(StandardCharsets.UTF_8));
             os.flush();
         }
-    }
-    
-    /**
-     * 获取模拟版本列表数据
-     */
-    private List<VersionVO> getMockVersionList() {
-        List<VersionVO> list = new ArrayList<>();
-        
-        VersionVO v1 = new VersionVO();
-        v1.setId(1);
-        v1.setVersion("1.0.0");
-        v1.setType("stable");
-        v1.setDescription("首个正式版本");
-        v1.setUpdateContent("## 新特性\n- 基础功能实现\n- 设备管理\n- 数据分析\n- 告警功能");
-        v1.setPublishTime(LocalDateTime.now().minusDays(30));
-        v1.setCreateTime(LocalDateTime.now().minusDays(35));
-        v1.setUpdateTime(LocalDateTime.now().minusDays(30));
-        v1.setPublisher("管理员");
-        v1.setIsActive(true);
-        list.add(v1);
-        
-        VersionVO v2 = new VersionVO();
-        v2.setId(2);
-        v2.setVersion("0.9.0");
-        v2.setType("beta");
-        v2.setDescription("公测版本");
-        v2.setUpdateContent("## 新特性\n- 基础功能实现\n- 设备管理\n- 数据分析");
-        v2.setPublishTime(LocalDateTime.now().minusDays(60));
-        v2.setCreateTime(LocalDateTime.now().minusDays(65));
-        v2.setUpdateTime(LocalDateTime.now().minusDays(60));
-        v2.setPublisher("系统管理员");
-        v2.setIsActive(false);
-        list.add(v2);
-        
-        VersionVO v3 = new VersionVO();
-        v3.setId(3);
-        v3.setVersion("0.8.5");
-        v3.setType("beta");
-        v3.setDescription("测试版更新");
-        v3.setUpdateContent("## 修复\n- 修复了设备连接问题\n- 优化了数据展示");
-        v3.setPublishTime(LocalDateTime.now().minusDays(90));
-        v3.setCreateTime(LocalDateTime.now().minusDays(95));
-        v3.setUpdateTime(LocalDateTime.now().minusDays(90));
-        v3.setPublisher("系统管理员");
-        v3.setIsActive(false);
-        list.add(v3);
-        
-        VersionVO v4 = new VersionVO();
-        v4.setId(4);
-        v4.setVersion("0.8.0");
-        v4.setType("alpha");
-        v4.setDescription("内部测试版");
-        v4.setUpdateContent("## 内测功能\n- 设备管理基础实现\n- 简单数据展示");
-        v4.setPublishTime(LocalDateTime.now().minusDays(120));
-        v4.setCreateTime(LocalDateTime.now().minusDays(125));
-        v4.setUpdateTime(LocalDateTime.now().minusDays(120));
-        v4.setPublisher("系统管理员");
-        v4.setIsActive(false);
-        list.add(v4);
-        
-        VersionVO v5 = new VersionVO();
-        v5.setId(5);
-        v5.setVersion("0.7.0");
-        v5.setType("alpha");
-        v5.setDescription("初始开发版本");
-        v5.setUpdateContent("## 初始开发\n- 项目初始化\n- 基础框架搭建");
-        v5.setPublishTime(LocalDateTime.now().minusDays(150));
-        v5.setCreateTime(LocalDateTime.now().minusDays(155));
-        v5.setUpdateTime(LocalDateTime.now().minusDays(150));
-        v5.setPublisher("系统管理员");
-        v5.setIsActive(false);
-        list.add(v5);
-        
-        return list;
     }
 } 

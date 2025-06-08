@@ -51,6 +51,11 @@ public class Protocol extends BaseEntity {
      * 状态 (例如: 0-禁用, 1-启用)
      */
     private Integer status;
+    
+    /**
+     * 协议配置，JSON格式
+     */
+    private String config;
 
     // createTime 和 updateTime 字段通常由 BaseEntity 提供，如果您的 BaseEntity 不包含它们，请取消注释以下代码
     /*

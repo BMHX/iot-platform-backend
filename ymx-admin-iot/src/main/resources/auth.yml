@@ -10,3 +10,5 @@ auth:
     - /iot/tenant-attribute-definitions/**
     - /iot/tenant-attribute-values/**
     - /api/tenant/**
+    - /admin/protocol/**
+    - /admin/version/**

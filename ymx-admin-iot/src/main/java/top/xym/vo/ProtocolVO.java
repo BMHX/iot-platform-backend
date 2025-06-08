@@ -29,8 +29,8 @@ public class ProtocolVO {
     @Schema(description = "协议描述")
     private String description;
 
-    @Schema(description = "协议状态：enabled-启用，disabled-禁用")
-    private String status;
+    @Schema(description = "协议状态：1-启用，0-禁用")
+    private Integer status;
 
     @Schema(description = "协议配置，JSON格式")
     private String config;
