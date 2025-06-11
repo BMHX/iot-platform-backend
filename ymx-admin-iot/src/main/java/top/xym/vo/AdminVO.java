@@ -1,6 +1,7 @@
 package top.xym.vo;
 
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 public class AdminVO {
@@ -13,4 +14,5 @@ public class AdminVO {
     private String status;    // 管理员状态
     private Integer permissionId; // 权限套餐ID
     private String lastLoginTime; // 最后登录时间
+    private LocalDateTime dueTime; // 套餐到期时间
 }

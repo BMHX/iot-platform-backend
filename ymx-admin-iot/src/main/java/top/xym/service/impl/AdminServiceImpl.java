@@ -8,16 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 import top.xym.convert.AdminConvert;
 import top.xym.convert.PricesConvert;
 import top.xym.dao.AdminDao;
+import top.xym.dao.PriceTimeDao;
 import top.xym.dao.PricesDao;
 import top.xym.dto.AdminDTO;
 import top.xym.entity.Admin;
+import top.xym.entity.PriceTime;
 import top.xym.entity.Prices;
 import top.xym.query.AdminQuery;
 import top.xym.service.AdminService;
+import top.xym.service.PriceTimeService;
 import top.xym.vo.AdminVO;
 import top.xym.framework.common.utils.PageResult;
 import top.xym.vo.PricesVO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,9 +31,12 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
     private AdminConvert adminConvert;
     private final AdminDao adminDao;
     private final PricesDao pricesDao; // 注入 PricesDao
-    public AdminServiceImpl(AdminDao adminDao, PricesDao pricesDao) {
+    private final PriceTimeService priceTimeService; // 注入 PriceTimeService
+    
+    public AdminServiceImpl(AdminDao adminDao, PricesDao pricesDao, PriceTimeService priceTimeService) {
         this.adminDao = adminDao;
         this.pricesDao = pricesDao;
+        this.priceTimeService = priceTimeService;
     }
 
     @Override
@@ -39,13 +46,28 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
         queryWrapper.eq(query.getIdentity() != null, "identity", query.getIdentity());
         List<Admin> list = list(queryWrapper);
         List<AdminVO> voList = adminConvert.convertList(list);
+        
+        // 为每个管理员设置套餐到期时间
+        for (AdminVO adminVO : voList) {
+            LocalDateTime dueTime = getAdminDueTime(adminVO.getId());
+            adminVO.setDueTime(dueTime);
+        }
+        
         return new PageResult<>(voList, voList.size());
     }
 
     @Override
     public AdminVO getAdminById(Long id) {
         Admin admin = getById(id);
-        return adminConvert.convert(admin);
+        AdminVO adminVO = adminConvert.convert(admin);
+        
+        // 设置套餐到期时间
+        if (adminVO != null) {
+            LocalDateTime dueTime = getAdminDueTime(id);
+            adminVO.setDueTime(dueTime);
+        }
+        
+        return adminVO;
     }
 
     @Override
@@ -63,9 +85,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
     @Override
     public void deleteAdmin(Long id) {
         removeById(id);
+        // 删除管理员对应的套餐到期时间记录
+        priceTimeService.deleteByAdminId(id);
     }
-
-
 
     @Override
     @Transactional
@@ -100,6 +122,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
         }
         admin.setPermissionId(null); // 设置为null表示移除
         adminDao.updateById(admin);
+        
+        // 删除套餐到期时间
+        priceTimeService.deleteByAdminId(adminId);
     }
 
     @Override
@@ -110,5 +135,23 @@ public class AdminServiceImpl extends ServiceImpl<AdminDao, Admin> implements Ad
         }
         Prices prices = pricesDao.selectById(admin.getPermissionId());
         return PricesConvert.INSTANCE.convert(prices);
+    }
+    
+    @Override
+    public void setAdminDueTime(Long adminId, LocalDateTime dueTime) {
+        // 检查管理员是否存在
+        Admin admin = adminDao.selectById(adminId);
+        if (admin == null) {
+            throw new RuntimeException("管理员不存在");
+        }
+        
+        // 设置套餐到期时间
+        priceTimeService.setDueTime(adminId, dueTime);
+    }
+    
+    @Override
+    public LocalDateTime getAdminDueTime(Long adminId) {
+        PriceTime priceTime = priceTimeService.getByAdminId(adminId);
+        return priceTime != null ? priceTime.getDueTime() : null;
     }
 }

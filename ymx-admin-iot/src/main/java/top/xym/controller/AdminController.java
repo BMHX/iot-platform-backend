@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import top.xym.vo.AdminVO;
 import top.xym.framework.common.utils.Result;
 import top.xym.vo.PricesVO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -99,5 +101,22 @@ public class AdminController {
             @Parameter(description = "管理员ID") @PathVariable Long adminId) {
         PricesVO pricesVO = adminService.getAdminPermission(adminId);
         return Result.ok(pricesVO);
+    }
+    
+    @PostMapping("/{adminId}/duetime")
+    @Operation(summary = "设置管理员的套餐到期时间")
+    public Result<?> setAdminDueTime(
+            @Parameter(description = "管理员ID") @PathVariable Long adminId,
+            @Parameter(description = "到期时间") @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime dueTime) {
+        adminService.setAdminDueTime(adminId, dueTime);
+        return Result.ok();
+    }
+    
+    @GetMapping("/{adminId}/duetime")
+    @Operation(summary = "获取管理员的套餐到期时间")
+    public Result<LocalDateTime> getAdminDueTime(
+            @Parameter(description = "管理员ID") @PathVariable Long adminId) {
+        LocalDateTime dueTime = adminService.getAdminDueTime(adminId);
+        return Result.ok(dueTime);
     }
 }

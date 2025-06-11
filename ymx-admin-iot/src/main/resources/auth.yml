@@ -12,3 +12,4 @@ auth:
     - /api/tenant/**
     - /admin/protocol/**
     - /admin/version/**
+    - /iot/dashboard/**

@@ -7,6 +7,8 @@ import top.xym.query.AdminQuery;
 import top.xym.vo.AdminVO;
 import top.xym.framework.common.utils.PageResult;
 
+import java.time.LocalDateTime;
+
 public interface AdminService extends IService<Admin> {
     PageResult<AdminVO> page(AdminQuery query);
     AdminVO getAdminById(Long id);
@@ -43,4 +45,20 @@ public interface AdminService extends IService<Admin> {
      * @return PricesVO 权限套餐详情，如果未分配则返回null
      */
     top.xym.vo.PricesVO getAdminPermission(Long adminId);
+    
+    /**
+     * 设置管理员的套餐到期时间
+     *
+     * @param adminId 管理员ID
+     * @param dueTime 到期时间
+     */
+    void setAdminDueTime(Long adminId, LocalDateTime dueTime);
+    
+    /**
+     * 获取管理员的套餐到期时间
+     *
+     * @param adminId 管理员ID
+     * @return 套餐到期时间
+     */
+    LocalDateTime getAdminDueTime(Long adminId);
 }
